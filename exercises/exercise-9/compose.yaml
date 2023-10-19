@@ -1,0 +1,36 @@
+services:
+    microservice_X:
+        image: flask_docker_app_frontend
+        container_name: frontend
+        build: ./frontend # location of image
+        expose: ["5000"] # open the microservice on port 5000 on the container
+                         # either expose port in the yaml file or in the dockerfile
+        ports: ["9000:5000"] # maps port 9000 of the dockerhost(my machine) to port 5000 of the container
+        environment:
+            FLASK_ENV: "development"
+        volumes: ["myvolume:/var"] # set here due to the redis volumne
+                                    # state of server saved in this volume
+    microservice_Y:
+        image: flask_docker_app_backend_y #image build
+        container_name: backend_y
+        build: ./backend_y
+        expose: ["5000"] #no need for port mapping on this service
+        environment:
+            FLASK_ENV: "development"
+    microservice_Z:
+        image: flask_docker_app_backend_z
+        container_name: backend_z
+        build: ./backend_z
+        expose: ["5000"] 
+        ports: ["9001:5000"] #go to http://localhost:9001 to see the total average
+        environment:
+            FLASK_ENV: "development"
+    database:
+        image: "redis:alpine" # pull redis image from hub
+        container_name: my_db #when we run this image, it will create a volumne and attach it to the container
+                                # so no need to specify any volume here. 
+volumes:
+    myvolume: 
+        name: "volume_name"
+        
+        
